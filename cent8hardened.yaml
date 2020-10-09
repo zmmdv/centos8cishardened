@@ -41,6 +41,35 @@
      name: '*'
      state: latest
      update_cache: yes
+  
+  - name: Editing fstab
+    lineinfile:
+      path: /etc/fstab
+      regexp: '^(\S+\s+/tmp\s+\S+\s+defaults)'
+      line: '\1,nodev,nosuid,noexec 1 2'
+      backrefs: yes
+
+  - name: Editing fstab 
+    lineinfile:
+      path: /etc/fstab
+      line: 'tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0'
+      state: present
+  
+  - name: Editing fstab
+    lineinfile:
+      path: /etc/fstab
+      regexp: '^(\S+\s+/var/tmp\s+\S+\s+defaults)'
+      line: '\1,nodev,nosuid,noexec 1 2'
+      backrefs: yes
+
+
+  - name: Editing fstab
+    lineinfile:
+      path: /etc/fstab
+      regexp: '^(\S+\s+/home\s+\S+\s+defaults)'
+      line: '\1,nodev 1 2'
+      backrefs: yes
+
 
   - name: Rebooting the machine
     reboot:
@@ -239,110 +268,110 @@
   - name: copy of standart /etc/ssh/sshd_config
     command: cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config Protocol 2
     lineinfile:
      path: /etc/ssh/sshd_config
      line: 'Protocol 2'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config Port 6465
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#Port 22'
      line: 'Port 6465'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config LogLevel INFO
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#LogLevel INFO'
      line: 'LogLevel INFO'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config X11Forwarding no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: 'X11Forwarding yes'
      line: 'X11Forwarding no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config MaxAuthTries 3
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#MaxAuthTries 6'
      line: 'MaxAuthTries 3'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config IgnoreRhosts yes
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#IgnoreRhosts yes'
      line: 'IgnoreRhosts yes'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config HostbasedAuthentication no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#HostbasedAuthentication no'
      line: 'HostbasedAuthentication no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config PermitRootLogin no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: 'PermitRootLogin yes'
      line: 'PermitRootLogin no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config PermitUserEnvironment no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#PermitUserEnvironment no'
      line: 'PermitUserEnvironment no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config PermitEmptyPasswords no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#PermitEmptyPasswords no'
      line: 'PermitEmptyPasswords no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config ClientAliveInterval 300
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#ClientAliveInterval 0'
      line: 'ClientAliveInterval 300'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config ClientAliveCountMax 0
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#ClientAliveCountMax 3'
      line: 'ClientAliveCountMax 0'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config AllowGroups ansible
     lineinfile:
      path: /etc/ssh/sshd_config
      line: 'AllowGroups ansible'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config MaxStartups 10:30:60
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#MaxStartups 10:30:100'
      line: 'MaxStartups 10:30:60'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config AllowTcpForwarding no
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#AllowTcpForwarding no'
      line: 'AllowTcpForwarding no'
      state: present
 
-  - name: Changing /etc/ssh/sshd_config
+  - name: Changing /etc/ssh/sshd_config LoginGraceTime 1m
     lineinfile:
      path: /etc/ssh/sshd_config
      regexp: '#LoginGraceTime 2m'
@@ -365,19 +394,17 @@
       name: sshd
       state: restarted
   
-  - name: Changing /etc/profile
-    lineinfile:
-     path: /etc/profile
-     regexp: '       umask 022'
-     line: '       umask 027'
-     state: present
+  - name: Ansible replace umask string
+    replace:
+      path: /etc/profile
+      regexp: 'umask 022'
+      replace: "umask 027"
 
-  - name: Changing /etc/bashrc
-    lineinfile:
-     path: /etc/bashrc
-     regexp: '       umask 022'
-     line: '       umask 027'
-     state: present
+  - name: Ansible replace umask string
+    replace:
+      path: /etc/bashrc
+      regexp: 'umask 022'
+      replace: "umask 027"
 
   - name: Changing /etc/login.defs
     lineinfile:
@@ -400,7 +427,7 @@
     - readonly TMOUT
     - export TMOUT
 
-  - name: Chown and Chmow
+  - name: Chown and Chmod
     shell: 
       cmd: |
         chmod 644 /etc/passwd
